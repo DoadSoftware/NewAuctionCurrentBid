@@ -1,0 +1,4 @@
+com\auction\controller\IndexController.class
+com\auction\config\WebMvcConfig.class
+com\auction\config\core\SpringMvcInitializer.class
+com\auction\config\DataSourceConfig.class
