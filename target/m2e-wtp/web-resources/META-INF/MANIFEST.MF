@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Built-By: Admin
-Build-Jdk: 24.0.2
+Built-By: BadDemon
+Build-Jdk: 21.0.10
 Created-By: Maven Integration for Eclipse
 

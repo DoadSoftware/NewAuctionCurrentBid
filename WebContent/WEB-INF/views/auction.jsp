@@ -156,7 +156,7 @@
   </style>
 </head>
 <body onload="afterPageLoad('AUCTION');">
-<form:form name="auction_form" autocomplete="off" action="auction" method="POST" enctype="multipart/form-data">
+<form:form name="auction_form" autocomplete="off" action="auction" method="POST" >
 <div class="content py-5">
   <div class="container">
 	<div class="row">
@@ -170,7 +170,7 @@
 			    <div class="panel panel-default">
 			      <div class="panel-heading">
 			        <h4 class="panel-title">
-			          <a class="wordart-3d" data-toggle="collapse" data-parent="#match_configuration" href="#load_setup_match">Configuration</a>
+			          <a class="wordart-3d" data-bs-toggle="collapse"  href="#load_setup_match">Configuration</a>
 			        </h4>
 			      </div>
 			      <div id="load_setup_match" class="panel-collapse collapse">

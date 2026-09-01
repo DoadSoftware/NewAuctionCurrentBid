@@ -89,7 +89,7 @@ public class IndexController
 			model.addAttribute("error_message","This software has expired");
 			return "error";
 		}else {
-			
+			session_selected_broadcaster = selected_broadcaster;			
 			session_Configurations = new Configurations(selected_broadcaster, vizIPAddress, Integer.valueOf(vizPortNumber),
 					vizSecondaryIPAddress, Integer.valueOf(vizSecondaryPortNumber));
 			JAXBContext.newInstance(Configurations.class).createMarshaller().marshal(session_Configurations, 
@@ -99,7 +99,6 @@ public class IndexController
 			
 			print_writer = processPrintWriter(session_Configurations);
 			
-			session_selected_broadcaster = selected_broadcaster;			
 			session_current_bid = new Auction();
 			session_auction = new Auction();
 			session_clock = new Clock();
@@ -108,7 +107,7 @@ public class IndexController
 		}
 	}
 	
-	@RequestMapping(value = {"/processAuctionProcedures"}, method={RequestMethod.GET,RequestMethod.POST})    
+	@RequestMapping(value = {"/processAuctionProcedures.html"}, method={RequestMethod.GET,RequestMethod.POST})    
 	public @ResponseBody String processAuctionProcedures(
 			@RequestParam(value = "whatToProcess", required = false, defaultValue = "") String whatToProcess,
 			@RequestParam(value = "valueToProcess", required = false, defaultValue = "") String valueToProcess)
