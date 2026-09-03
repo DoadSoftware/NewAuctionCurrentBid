@@ -244,6 +244,23 @@ public class IndexController
 				break;
 			case AuctionUtil.INCREMENT_BID:
 				switch (session_selected_broadcaster) {
+				case "VCL":
+					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
+						if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ELITE")) {
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 25000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("PRO")){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 25000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ROOKIE")){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 20000);
+							
+						}
+					}
+					break;
 				case "PSL":
 					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
 						if(session_current_bid.getCurrentPlayers().getSoldForPoints() == 6000000 || session_current_bid.getCurrentPlayers().getSoldForPoints() < 11000000) {
@@ -342,6 +359,23 @@ public class IndexController
 				break;
 			case AuctionUtil.DECREMENT_BID:
 				switch (session_selected_broadcaster) {
+				case "VCL":
+					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
+						if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ELITE")) {
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 25000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("PRO")){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 25000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ROOKIE")){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 20000);
+							
+						}
+					}
+					break;
 				case "PSL":
 					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
 						if(session_current_bid.getCurrentPlayers().getSoldForPoints() == 6000000 || session_current_bid.getCurrentPlayers().getSoldForPoints() < 11000000) {
