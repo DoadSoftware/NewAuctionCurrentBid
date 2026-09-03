@@ -248,9 +248,14 @@ public class IndexController
 					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
 						if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ELITE")) {
 							
-							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 25000);
-							
-						}else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("PRO")){
+							 if (session_current_bid.getCurrentPlayers().getSoldForPoints() < 1200000) {
+							        session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 50000);
+							        
+							    } else {
+							    	session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 25000);
+							    }
+							}
+						else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("PRO")){
 							
 							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 25000);
 							
@@ -363,9 +368,13 @@ public class IndexController
 					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
 						if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ELITE")) {
 							
-							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 25000);
-							
-						}else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("PRO")){
+							 if (session_current_bid.getCurrentPlayers().getSoldForPoints()  <= 1200000) {
+							        session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 50000);
+							        
+							    } else{
+							    	session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 25000);
+							    }
+							}else if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("PRO")){
 							
 							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 25000);
 							
