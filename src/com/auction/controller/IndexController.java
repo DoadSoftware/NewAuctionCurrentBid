@@ -244,6 +244,23 @@ public class IndexController
 				break;
 			case AuctionUtil.INCREMENT_BID:
 				switch (session_selected_broadcaster) {
+				case "ILT20":
+					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
+						if(session_current_bid.getCurrentPlayers().getSoldForPoints() == 10000 || session_current_bid.getCurrentPlayers().getSoldForPoints() < 50000) {
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 2000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getSoldForPoints() == 50000 || session_current_bid.getCurrentPlayers().getSoldForPoints() < 100000){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 5000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getSoldForPoints() >= 100000){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() + 10000);
+							
+						}
+					}
+					break;
 				case "VCL":
 					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
 						if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ELITE")) {
@@ -364,6 +381,24 @@ public class IndexController
 				break;
 			case AuctionUtil.DECREMENT_BID:
 				switch (session_selected_broadcaster) {
+				case "ILT20":
+					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
+						if(session_current_bid.getCurrentPlayers().getSoldForPoints() == 10000 || session_current_bid.getCurrentPlayers().getSoldForPoints() < 50000) {
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 2000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getSoldForPoints() == 50000 || session_current_bid.getCurrentPlayers().getSoldForPoints() < 100000){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 5000);
+							
+						}else if(session_current_bid.getCurrentPlayers().getSoldForPoints() >= 100000){
+							
+							session_current_bid.getCurrentPlayers().setSoldForPoints(session_current_bid.getCurrentPlayers().getSoldForPoints() - 10000);
+							
+						}
+					}
+					break;
+				
 				case "VCL":
 					if(session_current_bid.getCurrentPlayers().getSoldOrUnsold().equalsIgnoreCase(AuctionUtil.BID)) {
 						if(session_current_bid.getCurrentPlayers().getCategory().equalsIgnoreCase("ELITE")) {
