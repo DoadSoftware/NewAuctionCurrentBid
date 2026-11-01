@@ -1,4 +1,4 @@
-var session_auction, soldForPoints, timer = 15;
+var session_auction, soldForPoints, timer = 50;
 function millisToMinutesAndSeconds(millis) {
   var s = (millis / 1000).toFixed(0);
   return (s < 10 ? '0' + s :s);
@@ -55,7 +55,7 @@ function processUserSelectionData(whatToProcess,dataToProcess){
 	case 'LOGGER_FORM_KEYPRESS':
 		switch (dataToProcess) {
 		case 's': // 83
-			timer = 15
+			timer = 50
 			processAuctionProcedures('LOG_CLOCK_STATUS','START');
 			break;
 		case 'a': // 65
@@ -309,7 +309,7 @@ function addItemsToList(whatToProcess, dataToProcess)
 						 	break;
 						case 1:
 							text.id = 'match_time_hdr';
-							text.innerHTML = 'TIMER: 15';
+							text.innerHTML = 'TIMER: 50';
 							break;
 						case 2:
 							text.id = 'match_status_hdr';

@@ -76,7 +76,9 @@ public class IndexController
 			@RequestParam(value = "vizIPAddress", required = false, defaultValue = "") String vizIPAddress,
 			@RequestParam(value = "vizPortNumber", required = false, defaultValue = "") String vizPortNumber,
 			@RequestParam(value = "vizSecondaryIPAddress", required = false, defaultValue = "") String vizSecondaryIPAddress,
-			@RequestParam(value = "vizSecondaryPortNumber", required = false, defaultValue = "") String vizSecondaryPortNumber)
+			@RequestParam(value = "vizSecondaryPortNumber", required = false, defaultValue = "") String vizSecondaryPortNumber,
+			@RequestParam(value = "vizTertiaryIPAddress", required = false, defaultValue = "") String vizTertiaryIPAddress,
+			@RequestParam(value = "vizTertiaryPortNumber", required = false, defaultValue = "") String vizTertiaryPortNumber)
 					throws JAXBException, IOException, ParseException 
 	{
 		if(current_date == null || current_date.isEmpty()) {
@@ -90,13 +92,12 @@ public class IndexController
 			return "error";
 		}else {
 			session_selected_broadcaster = selected_broadcaster;			
-			session_Configurations = new Configurations(selected_broadcaster, vizIPAddress, Integer.valueOf(vizPortNumber),
-					vizSecondaryIPAddress, Integer.valueOf(vizSecondaryPortNumber));
+			session_Configurations = new Configurations(selected_broadcaster, vizIPAddress, Integer.valueOf(vizPortNumber),vizSecondaryIPAddress, 
+					Integer.valueOf(vizSecondaryPortNumber), vizTertiaryIPAddress, Integer.valueOf(vizTertiaryPortNumber));
 			JAXBContext.newInstance(Configurations.class).createMarshaller().marshal(session_Configurations, 
 					new File(AuctionUtil.AUCTION_DIRECTORY + "Auction_Config.XML"));
 			
 			PortNumber = Integer.valueOf(vizPortNumber);
-			
 			print_writer = processPrintWriter(session_Configurations);
 			
 			session_current_bid = new Auction();
@@ -133,34 +134,38 @@ public class IndexController
 				new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), session_current_bid);
 				main_sec = (session_clock.getMatchTotalMilliSeconds()/1000);
 				
-				if(print_writer.size() == 2) {
-					print_writer.get(0).println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTimer " + twoDigitString(main_sec) + ";");
-					
-					print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
-					
-					if(main_sec == 1) {
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End START;");
-						TimeUnit.MILLISECONDS.sleep(200);
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_Out START;");
-						
-						print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
-						
-						TimeUnit.MILLISECONDS.sleep(1000);
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End SHOW 0.0;");
-						TimeUnit.MILLISECONDS.sleep(200);
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In SHOW 0.0;");
-						
-						session_current_bid.getClock().setMatchTotalMilliSeconds(15000);
-						session_current_bid.getClock().setMatchTimeStatus("PAUSE");
-						new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), session_current_bid);
+				switch(session_selected_broadcaster) {
+				case "AFG_DRAFT":
+					for (int i = 0; i < print_writer.size(); i++) {
+					    if (print_writer.size() >= 2 && i == 1) {
+					        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+					        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side2$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+					    } else {
+					        print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+					    }
 					}
-				}else if(print_writer.size() == 1){
-					if(PortNumber == 1980) {
+
+					if (main_sec == 1) {
+					    print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
+
+					    session_current_bid.getClock().setMatchTotalMilliSeconds(50000);
+					    session_current_bid.getClock().setMatchTimeStatus("PAUSE");
+
+					    new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON),session_current_bid);
+					}
+					break;
+				default:
+					if(print_writer.size() == 2) {
 						print_writer.get(0).println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTimer " + twoDigitString(main_sec) + ";");
+						
+						print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+						
 						if(main_sec == 1) {
 							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End START;");
 							TimeUnit.MILLISECONDS.sleep(200);
 							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_Out START;");
+							
+							print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
 							
 							TimeUnit.MILLISECONDS.sleep(1000);
 							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End SHOW 0.0;");
@@ -171,73 +176,135 @@ public class IndexController
 							session_current_bid.getClock().setMatchTimeStatus("PAUSE");
 							new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), session_current_bid);
 						}
-						
-					}else if(PortNumber == 6100) {
-						print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
-						if(main_sec == 1) {
-							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
+					}else if(print_writer.size() == 1){
+						if(PortNumber == 1980) {
+							print_writer.get(0).println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTimer " + twoDigitString(main_sec) + ";");
+							if(main_sec == 1) {
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End START;");
+								TimeUnit.MILLISECONDS.sleep(200);
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_Out START;");
+								
+								TimeUnit.MILLISECONDS.sleep(1000);
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End SHOW 0.0;");
+								TimeUnit.MILLISECONDS.sleep(200);
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In SHOW 0.0;");
+								
+								session_current_bid.getClock().setMatchTotalMilliSeconds(15000);
+								session_current_bid.getClock().setMatchTimeStatus("PAUSE");
+								new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), session_current_bid);
+							}
+							
+						}else if(PortNumber == 6100) {
+							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+							if(main_sec == 1) {
+								print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
 
-							session_current_bid.getClock().setMatchTotalMilliSeconds(15000);
-							session_current_bid.getClock().setMatchTimeStatus("PAUSE");
-							new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), session_current_bid);
+								session_current_bid.getClock().setMatchTotalMilliSeconds(15000);
+								session_current_bid.getClock().setMatchTimeStatus("PAUSE");
+								new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), session_current_bid);
+							}
 						}
 					}
+					break;
 				}
 				break;
 			case "LOG_CLOCK_STATUS":
 				session_current_bid.getClock().setMatchTimeStatus(valueToProcess);
+				
+				switch(session_selected_broadcaster) {
+				case "AFG_DRAFT":
+					if(valueToProcess.equalsIgnoreCase("PAUSE")) {
+						if(print_writer.size() == 2 || print_writer.size() == 3) {
+							
+						}else if(print_writer.size() == 1) {
+							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
+						}
+						
+						session_current_bid.getClock().setMatchTotalMilliSeconds(50000);
+						
+					}else if(valueToProcess.equalsIgnoreCase("START")) {
+						main_sec = (session_clock.getMatchTotalMilliSeconds()/1000);
+						
+						for (int i = 0; i < print_writer.size(); i++) {
+						    if (i >= 1) {
+						        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+						        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side2$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+						    } else {
+						        print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+						    }
 
-				if(valueToProcess.equalsIgnoreCase("PAUSE")) {
-					if(print_writer.size() == 2) {
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End START;");
-						TimeUnit.MILLISECONDS.sleep(200);
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_Out START;");
+						    if (i == 0) {
+						        print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
+						    }
+						}
 						
-						print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
-						
-						TimeUnit.MILLISECONDS.sleep(1000);
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End SHOW 0.0;");
-						TimeUnit.MILLISECONDS.sleep(200);
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In SHOW 0.0;");
-					}else if(print_writer.size() == 1) {
-						if(PortNumber == 1980) {
+						if(print_writer.size() == 2) {
+							print_writer.get(1).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+							
+							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
+							
+						}else if(print_writer.size() == 1) {
+							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
+						}
+						TimeUnit.MILLISECONDS.sleep(800);
+					}
+					break;
+				default:
+					if(valueToProcess.equalsIgnoreCase("PAUSE")) {
+						if(print_writer.size() == 2) {
 							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End START;");
 							TimeUnit.MILLISECONDS.sleep(200);
 							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_Out START;");
+							
+							print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
 							
 							TimeUnit.MILLISECONDS.sleep(1000);
 							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End SHOW 0.0;");
 							TimeUnit.MILLISECONDS.sleep(200);
 							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In SHOW 0.0;");
-							
-						}else if(PortNumber == 6100) {
-							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
+						}else if(print_writer.size() == 1) {
+							if(PortNumber == 1980) {
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End START;");
+								TimeUnit.MILLISECONDS.sleep(200);
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_Out START;");
+								
+								TimeUnit.MILLISECONDS.sleep(1000);
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_End SHOW 0.0;");
+								TimeUnit.MILLISECONDS.sleep(200);
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In SHOW 0.0;");
+								
+							}else if(PortNumber == 6100) {
+								print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
+							}
 						}
-					}
-					
-					session_current_bid.getClock().setMatchTotalMilliSeconds(15000);
-					
-				}else if(valueToProcess.equalsIgnoreCase("START")) {
-					main_sec = (session_clock.getMatchTotalMilliSeconds()/1000);
-					
-					if(print_writer.size() == 2) {
-						print_writer.get(0).println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTimer " + twoDigitString(main_sec) + ";");
-						print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
 						
-						print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In START;");
-						print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
+						session_current_bid.getClock().setMatchTotalMilliSeconds(15000);
 						
-					}else if(print_writer.size() == 1) {
-						if(PortNumber == 1980) {
+					}else if(valueToProcess.equalsIgnoreCase("START")) {
+						main_sec = (session_clock.getMatchTotalMilliSeconds()/1000);
+						
+						if(print_writer.size() == 2) {
 							print_writer.get(0).println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTimer " + twoDigitString(main_sec) + ";");
-							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In START;");
+							print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
 							
-						}else if(PortNumber == 6100) {
-							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
-							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
+							print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In START;");
+							print_writer.get(1).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
+							
+						}else if(print_writer.size() == 1) {
+							if(PortNumber == 1980) {
+								print_writer.get(0).println("LAYER1*EVEREST*TREEVIEW*Main*FUNCTION*TAG_CONTROL SET tTimer " + twoDigitString(main_sec) + ";");
+								print_writer.get(0).println("LAYER1*EVEREST*STAGE*DIRECTOR*Timer_In START;");
+								
+							}else if(PortNumber == 6100) {
+								print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*TREE*$gfx_ScoreBug$Main$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+								print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
+							}
 						}
+						TimeUnit.MILLISECONDS.sleep(800);
 					}
-					TimeUnit.MILLISECONDS.sleep(800);
+					break;
 				}
 
 				new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), session_current_bid);
@@ -566,16 +633,32 @@ public class IndexController
 					session_current_bid.setCurrentPlayers(session_auction.getPlayers().get(session_auction.getPlayers().size() -1));
 				}
 				
-				session_clock.setMatchHalves("15_Seconds");
-				session_clock.setMatchTotalMilliSeconds(15000);
+				switch(session_selected_broadcaster) {
+				case "AFG_DRAFT":
+					session_clock.setMatchHalves("50_Seconds");
+					session_clock.setMatchTotalMilliSeconds(50000);
+					break;
+				default:
+					session_clock.setMatchHalves("15_Seconds");
+					session_clock.setMatchTotalMilliSeconds(15000);
+					break;
+				}
 				session_clock.setMatchTimeStatus("PAUSE");
 				session_current_bid.setClock(session_clock);
 				
 				new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON), 
 						session_current_bid);
 			}else {
-				session_clock.setMatchHalves("15_Seconds");
-				session_clock.setMatchTotalMilliSeconds(15000);
+				switch(session_selected_broadcaster) {
+				case "AFG_DRAFT":
+					session_clock.setMatchHalves("50_Seconds");
+					session_clock.setMatchTotalMilliSeconds(50000);
+					break;
+				default:
+					session_clock.setMatchHalves("15_Seconds");
+					session_clock.setMatchTotalMilliSeconds(15000);
+					break;
+				}
 				session_clock.setMatchTimeStatus("PAUSE");
 				session_current_bid.setClock(session_clock);
 				

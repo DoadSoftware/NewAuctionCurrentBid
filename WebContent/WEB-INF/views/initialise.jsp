@@ -139,6 +139,7 @@
         <div class="form-group">
           <label for="selected_broadcaster">Select Broadcaster</label>
           <select id="selected_broadcaster" name="selected_broadcaster" onchange="processUserSelection(this)">
+          <option value="AFG_DRAFT">AFG DRAFT</option>
            <option value="ILT20">ILT20</option>
           <option value="VCL">VCL</option>
            <option value="WPL">WPL</option>
@@ -180,6 +181,22 @@
 		    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
 		    <div class="col-sm-6 col-md-6">
 	             <input type="text" id="vizSecondaryIPAddress" name="vizSecondaryIPAddress" value="${session_Configurations.secondaryipAddress}"
+	             		class="form-control form-control-sm floatlabel" value="localhost"></input>
+		    </div>
+		  </div>
+		  <div id="vizTertiaryPortNumber_div" class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
+		    <label for="vizTertiaryPortNumber" class="col-sm-4 col-form-label text-left">Viz Tertiary Port Number 
+		    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
+		    <div class="col-sm-6 col-md-6">
+	             <input type="text" id="vizTertiaryPortNumber" name="vizTertiaryPortNumber" value="${session_Configurations.tertiaryportNumber}"
+	             	class="form-control form-control-sm floatlabel"></input>
+		    </div>
+		  </div>
+		  <div id="vizTertiaryIPAddress_div" class="form-group row row-bottom-margin ml-2" style="margin-bottom:5px;">
+		    <label for="vizTertiaryIPAddress" class="col-sm-4 col-form-label text-left">Viz Tertiary IP Address 
+		    	<i class="fas fa-asterisk fa-sm text-danger" style="font-size: 7px;"></i></label>
+		    <div class="col-sm-6 col-md-6">
+	             <input type="text" id="vizTertiaryIPAddress" name="vizTertiaryIPAddress" value="${session_Configurations.tertiaryipAddress}"
 	             		class="form-control form-control-sm floatlabel" value="localhost"></input>
 		    </div>
 		  </div>
