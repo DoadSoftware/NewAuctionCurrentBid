@@ -137,20 +137,24 @@ public class IndexController
 				switch(session_selected_broadcaster) {
 				case "AFG_DRAFT":
 					for (int i = 0; i < print_writer.size(); i++) {
-					    if (print_writer.size() >= 2 && i == 1) {
-					        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+						if(i == 1) {
+				    		print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
 					        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side2$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
-					    } else {
-					        print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
-					    }
+				    	} else if(i==2) {
+				    		print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+					        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side2$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+				    	}else {
+				    		print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+				    	}
 					}
 
 					if (main_sec == 1) {
 					    print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
-
-					    session_current_bid.getClock().setMatchTotalMilliSeconds(50000);
+					}
+					
+					if(main_sec == 0) {
+						session_current_bid.getClock().setMatchTotalMilliSeconds(50000);
 					    session_current_bid.getClock().setMatchTimeStatus("PAUSE");
-
 					    new ObjectMapper().writeValue(new File(AuctionUtil.AUCTION_DIRECTORY + AuctionUtil.CURRENT_BID_JSON),session_current_bid);
 					}
 					break;
@@ -214,25 +218,23 @@ public class IndexController
 				switch(session_selected_broadcaster) {
 				case "AFG_DRAFT":
 					if(valueToProcess.equalsIgnoreCase("PAUSE")) {
-						if(print_writer.size() == 2 || print_writer.size() == 3) {
-							
-						}else if(print_writer.size() == 1) {
-							print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
-						}
-						
+						print_writer.get(0).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out CONTINUE\0");
 						session_current_bid.getClock().setMatchTotalMilliSeconds(50000);
 						
 					}else if(valueToProcess.equalsIgnoreCase("START")) {
 						main_sec = (session_clock.getMatchTotalMilliSeconds()/1000);
 						
 						for (int i = 0; i < print_writer.size(); i++) {
-						    if (i >= 1) {
-						        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+							if(i == 1) {
+					    		print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
 						        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side2$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
-						    } else {
-						        print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
-						    }
-
+					    	} else if(i==2) {
+					    		print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side1$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+						        print_writer.get(i).println("-1 RENDERER*TREE*$gfx_FullFrames$Main$Side2$BS_timer$Timer$Text$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+					    	}else {
+					    		print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*TREE*$Timer$Text$Timer$txt_Timer*GEOM*TEXT SET " + twoDigitString(main_sec) + "\0");
+					    	}
+							
 						    if (i == 0) {
 						        print_writer.get(i).println("-1 RENDERER*FRONT_LAYER*STAGE*DIRECTOR*anim_Timer$In_Out START\0");
 						    }
@@ -686,6 +688,11 @@ public class IndexController
 		if(config.getSecondaryipAddress() != null && !config.getSecondaryipAddress().isEmpty()) {
 			print_writer.add(new PrintWriter(new OutputStreamWriter(new Socket(config.getSecondaryipAddress(), 
 					config.getSecondaryportNumber()).getOutputStream(), StandardCharsets.UTF_8),true));
+		}
+		
+		if(config.getTertiaryipAddress() != null && !config.getTertiaryipAddress().isEmpty()) {
+			print_writer.add(new PrintWriter(new OutputStreamWriter(new Socket(config.getTertiaryipAddress(), 
+					config.getTertiaryportNumber()).getOutputStream(), StandardCharsets.UTF_8),true));
 		}
 		
 		return print_writer;
